@@ -3,6 +3,8 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
+import { ToastController } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-lista-qr',
@@ -16,7 +18,8 @@ export class ListaQrPage implements OnInit {
   constructor(
     private afAuth: AngularFireAuth,
     private router: Router,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
@@ -34,5 +37,35 @@ export class ListaQrPage implements OnInit {
       // Aquí puedes mostrar un mensaje de error al usuario
     }
   }
-}
+  addItem() {
+    const newItem = {
+      codigo: this.generateCode(),
+      status: 'Sin generar'
+    };
+
+    this.firestore.collection('codigosQR').add(newItem)
+      .then(() => {
+        this.presentToast('Elemento agregado', 'success');
+        //Mostrar mensaje
+      })
+      .catch(error => {
+        this.presentToast('Error al agregar el elemento, intente más tarde', 'danger');
+      });
+  }
+
+  generateCode(): String{
+    const now = new Date();
+    const uniqueString = now.toISOString().replace(/[-:.TZ]/g, '');
+    return uniqueString;
+  }
+
+  async presentToast(message: string, color: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2000,
+      color: color
+    });
+    toast.present();
+  }
+  }
 
