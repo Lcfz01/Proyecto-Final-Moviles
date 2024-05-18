@@ -10,6 +10,13 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <!-- Contenido de la página principal -->
-  <p>Bienvenido</p>
+  <ion-list>
+    <ion-item *ngFor="let item of (items | async)">
+      <ion-label>
+        <h2>{{ item.codigo }}</h2>
+        <p>{{ item.status }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-button expand="block" color="primary">Agregar Clave</ion-button>
 </ion-content>
